@@ -7,6 +7,7 @@
 #include <cctype>
 #include <iomanip>
 #include <climits>
+#include <istream>
 
 
 using namespace std;
@@ -18,12 +19,25 @@ void search (const vector<vector<string> >& rows, const vector<string>& columns,
 void findMinMaxAvg (const vector<vector<string> >& rows, const vector<string>& columns, const string& colName, const string& operation);
 
 int main(int argc, char* argv[]) {
+    string filename, colWidthstr;
+    int colWidth;
+    int bufferKiller;
+
     if (argc != 3) {
-        cerr << "Usage: " << argv[0] << " database.csv #col_width" << endl;
-        return 1;
+        //cerr << "Usage: " << argv[0] << " database.csv #col_width" << endl;
+        //return 1;
+        cout << "Please enter the filename (with complete path) for the database file" << endl;
+        getline(cin, filename);
+        cout << "Please enter the column width with an integer value" << endl;
+        getline(cin,colWidthstr);
+        colWidth = stoi(colWidthstr);
     }
-string filename = argv[1];
-int colWidth = stoi(argv[2]);
+    else
+    {
+        filename = argv[1];
+       colWidth = stoi(argv[2]);
+    }
+
 
 ifstream file(filename);
 if (!file.is_open()) {
