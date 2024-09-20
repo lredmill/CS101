@@ -18,7 +18,7 @@ void findMinMaxAvg(const vector<vector<string> >& rows, const vector<string>& co
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        cerr << "Usage: " << argv[0] << " ex.csv #col_width" << endl; 
+        cout << "Usage: ./a database.csv #col_width" << endl;
         return 1;
     }
 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     ifstream file(filename);
     if (!file.is_open()) {
-        cerr << "Failed to open " << filename << endl;
+        cout << "Failed to open \"" << filename << "\"" << endl;
         return 1;
     }
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     
     while (getline(file, line)) {
-        stringstream ss(line);
+        stringstream ss(line+"");
         string cell;
         vector<string> row;
         while (getline(ss, cell, ',')) {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
             ss >> quoted(colName); 
             findMinMaxAvg(rows, columns, colName, action);
         } else {
-            cerr << "Invalid command" << endl;
+            cout << "Invalid command" << endl; //cerr
         }
     }
 
@@ -134,7 +134,7 @@ void search(const vector<vector<string> >& rows, const vector<string>& columns, 
     bool found = false;
     int colIndex = -1;
 
-    
+    // Find the column index
     for (size_t i = 0; i < columns.size(); ++i) {
         if (columns[i] == colName) {
             colIndex = i;
@@ -143,36 +143,35 @@ void search(const vector<vector<string> >& rows, const vector<string>& columns, 
     }
 
     if (colIndex == -1 && colName != "*") {
-        cerr << "Invalid column \"" << colName << "\"" << endl;
+        cout << "Invalid column \"" << colName << "\"" << endl; //cerr
         return;
     }
 
-    
+    // Search for rows matching the value
     std::vector<std::vector<std::string> > fake_rows;
 
-    
+    // Print the header
     for (const auto& column : columns) {
         cout << setw(colWidth) << column;
     }
     cout << endl;
 
-    
     for (const auto& row : rows) {
-        if (colName == "*") {  
+        if (colName == "*") {
             for (const auto& cell : row) {
                 if (cell == value) {
-                    fake_rows.clear();  
-                    fake_rows.push_back(row); 
-                    printRows(fake_rows, colWidth);  
+                    fake_rows.clear();
+                    fake_rows.push_back(row);
+                    printRows(fake_rows, colWidth);
                     found = true;
                     break;
                 }
             }
-        } else {  
+        } else {
             if (row[colIndex] == value) {
-                fake_rows.clear();  
-                fake_rows.push_back(row);  
-                printRows(fake_rows, colWidth);  
+                fake_rows.clear();
+                fake_rows.push_back(row);
+                printRows(fake_rows, colWidth);
                 found = true;
             }
         }
@@ -182,7 +181,6 @@ void search(const vector<vector<string> >& rows, const vector<string>& columns, 
         cout << "No Results" << endl;
     }
 }
-
 void findMinMaxAvg(const vector<vector<string> >& rows, const vector<string>& columns, const string& colName, const string& operation) {
     int colIndex = -1;
 
@@ -195,7 +193,7 @@ void findMinMaxAvg(const vector<vector<string> >& rows, const vector<string>& co
     }
 
     if (colIndex == -1) {
-        cerr << "Invalid column \"" << colName << "\"" << endl;
+        cout << "Invalid column \"" << colName << "\"" << endl; //cerr
         return;
     }
 
@@ -222,7 +220,7 @@ void findMinMaxAvg(const vector<vector<string> >& rows, const vector<string>& co
 
     double avg = sum / count;
 
-    // Print header for the column and result
+    
     cout << setw(20) << colName << endl;
     
     if (operation == "min") {
