@@ -1,0 +1,27 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+int main(int argc, char* argv[]) {
+    // Ensure the correct number of arguments (1 for program name, 3 for the arguments)
+    if (argc != 4) {
+        std::cerr << "Usage: " << argv[0] << " arg1 arg2 arg3" << std::endl;
+        return 1;
+    }
+
+    // Create a vector to store the arguments
+    std::vector<std::string> args;
+
+    // Push command line arguments (argv[1] to argv[3]) to the vector
+    for (int i = 1; i < argc; ++i) {
+        args.push_back(argv[i]);
+    }
+
+    // Output the vector contents to confirm the arguments are stored
+    std::cout << "Stored arguments:" << std::endl;
+    for (const std::string& arg : args) {
+        std::cout << arg << std::endl;
+    }
+
+    return 0;
+}
