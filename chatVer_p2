@@ -1,0 +1,185 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <cctype>
+#include <climits>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+const int MAX_ITEMS = 20000;
+
+// Merge sort for integers
+void merge(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    int* L = new int[n1];
+    int* R = new int[n2];
+
+    for (int i = 0; i < n1; ++i)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; ++j)
+        R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+
+    delete[] L;
+    delete[] R;
+}
+
+void mergeSort(int arr[], int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+// Quick sort for strings
+int partition(vector<string>& arr, int low, int high) {
+    string pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(vector<string>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Function to read and sort data from a file (integers)
+int readAndSortInt(const string& filename, int data[]) {
+    ifstream infile(filename);
+    int value, count = 0;
+
+    while (infile >> value && count < MAX_ITEMS) {
+        data[count++] = value;
+    }
+
+    mergeSort(data, 0, count - 1);
+    return count;
+}
+
+// Function to read and sort data from a file (strings)
+int readAndSortString(const string& filename, vector<string>& data) {
+    ifstream infile(filename);
+    string value;
+
+    while (infile >> value && data.size() < MAX_ITEMS) {
+        data.push_back(value);
+    }
+
+    quickSort(data, 0, data.size() - 1);
+    return data.size();
+}
+
+// Function to find and print common elements (integers)
+void findAndPrintCommonInts(int arr1[], int size1, int arr2[], int size2) {
+    int i = 0, j = 0;
+
+    while (i < size1 && j < size2) {
+        if (arr1[i] == arr2[j]) {
+            cout << arr1[i] << endl;
+            i++;
+            j++;
+        } else if (arr1[i] < arr2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+}
+
+// Function to find and print common elements (strings)
+void findAndPrintCommonStrings(const vector<string>& arr1, const vector<string>& arr2) {
+    vector<string>::size_type i = 0, j = 0;  // Use vector's size_type for unsigned size comparisons
+
+    while (i < arr1.size() && j < arr2.size()) {
+        if (arr1[i] == arr2[j]) {
+            cout << arr1[i] << endl;
+            i++;
+            j++;
+        } else if (arr1[i] < arr2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+}
+
+int main(int argc, char* argv[]) {
+    // Ensure the correct number of arguments (1 for program name, 3 for the arguments)
+    if (argc != 4) {
+        cerr << "Usage: " << argv[0] << " <i/s> <input_file1> <input_file2>" << endl;
+        return 1;
+    }
+
+    // Create a vector to store the arguments
+    vector<string> args;
+
+    // Push command line arguments (argv[1] to argv[3]) to the vector
+    for (int i = 1; i < argc; ++i) {
+        args.push_back(argv[i]);
+    }
+
+    // Check if the mode is 'i' (integers) or 's' (strings)
+    char mode = args[0][0];
+    string file1 = args[1];
+    string file2 = args[2];
+
+    if (mode == 'i') {
+        int data1[MAX_ITEMS], data2[MAX_ITEMS];
+        int size1 = readAndSortInt(file1, data1);
+        int size2 = readAndSortInt(file2, data2);
+        findAndPrintCommonInts(data1, size1, data2, size2);
+    } else if (mode == 's') {
+        vector<string> data1, data2;
+        readAndSortString(file1, data1);  // Removed unused size1
+        readAndSortString(file2, data2);  // Removed unused size2
+        findAndPrintCommonStrings(data1, data2);
+    } else {
+        cerr << "Invalid mode. Use 'i' for integers or 's' for strings." << endl;
+        return 1;
+    }
+
+    return 0;
+}
